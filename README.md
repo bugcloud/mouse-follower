@@ -34,6 +34,7 @@ $(function() {
   $("#follower02").followMouse({
     animationSpeed: 800,
     easingFunction: "easeOutBack",
+    noFollowDistance: 50,
     catchUpCallback: function() {
       console.log(":D");
     }
@@ -51,6 +52,11 @@ $(function() {
 *easingFunction*
 追従するときのイージングを文字列で指定します。デフォルト値は
 **linear**
+です。
+
+*noFollowDistance*
+マウスの動いた距離がこの値以下の場合はコンテンツを追従させません。デフォルト値は
+**0**
 です。
 
 *catchUpCallback*

@@ -10,20 +10,31 @@ $.fn.followMouse = (opt) ->
   default_options =
     animationSpeed: 100
     easingFunction: "linear"
+    noFollowDistance: 0
     catchUpCallback: () ->
 
   options = $.extend {}, default_options, opt
   this.each () ->
     $_that = $(this)
-    $_that.selfWidth = $_that.outerWidth()
-    $_that.selfHeight = $_that.outerHeight()
+    obj = {}
+    obj.selfWidth = $_that.outerWidth()
+    obj.selfHeight = $_that.outerHeight()
+    obj.currentPosition = null
 
     $("html").mousemove (e) ->
-      $_that.stop(false, false)
-      props =
-        top: e.pageY - $_that.selfHeight / 2
-        left: e.pageX - $_that.selfWidth / 2
-      $_that.animate props, options.animationSpeed, options.easingFunction, options.catchUpCallback
+      if obj.currentPosition is null
+        obj.currentPosition = e
+      px = obj.currentPosition.pageX - e.pageX
+      py = obj.currentPosition.pageY - e.pageY
+      distance = Math.sqrt( Math.pow(px, 2) + Math.pow(py, 2) )
+      if distance > options.noFollowDistance
+        $_that.stop(false, false)
+        props =
+          top: e.pageY - obj.selfHeight / 2
+          left: e.pageX - obj.selfWidth / 2
+        $_that.animate props, options.animationSpeed, options.easingFunction, options.catchUpCallback
+        obj.currentPosition = e
+      return
     return
 
   return this
