@@ -19,6 +19,8 @@ https://github.com/bugcloud/mouse-follower
       animationSpeed: 100,
       easingFunction: "linear",
       noFollowDistance: 0,
+      distance: [0, 0],
+      position: "bottom-right",
       catchUpCallback: function() {}
     };
     options = $.extend({}, default_options, opt);
@@ -30,7 +32,7 @@ https://github.com/bugcloud/mouse-follower
       obj.selfHeight = $_that.outerHeight();
       obj.currentPosition = null;
       $("html").mousemove(function(e) {
-        var distance, props, px, py;
+        var distance, l, props, px, py, t;
         if (obj.currentPosition === null) {
           obj.currentPosition = e;
         }
@@ -39,9 +41,30 @@ https://github.com/bugcloud/mouse-follower
         distance = Math.sqrt(Math.pow(px, 2) + Math.pow(py, 2));
         if (distance > options.noFollowDistance) {
           $_that.stop(false, false);
+          t = e.pageY - obj.selfHeight / 2;
+          l = e.pageX - obj.selfWidth / 2;
+          if (!(distance[0] === 0 && distance[1] === 0)) {
+            switch (options.position) {
+              case "top-left":
+                t = t - options.distance[0];
+                l = l - options.distance[1];
+                break;
+              case "top-right":
+                t = t - options.distance[0];
+                l = l + options.distance[1];
+                break;
+              case "bottom-left":
+                t = t + options.distance[0];
+                l = l - options.distance[1];
+                break;
+              case "bottom-right":
+                t = t + options.distance[0];
+                l = l + options.distance[1];
+            }
+          }
           props = {
-            top: e.pageY - obj.selfHeight / 2,
-            left: e.pageX - obj.selfWidth / 2
+            top: t,
+            left: l
           };
           $_that.animate(props, options.animationSpeed, options.easingFunction, options.catchUpCallback);
           obj.currentPosition = e;
